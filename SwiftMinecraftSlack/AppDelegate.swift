@@ -15,12 +15,19 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(aNotification: NSNotification) {
         // Insert code here to initialize your application
+//        MinecraftServer.runJava()
+        _ = Player.loadPlayersFromFile()
+
+        
+        
+        
     }
 
     func applicationWillTerminate(aNotification: NSNotification) {
         // Insert code here to tear down your application
+        MinecraftServer.terminateServer()
     }
 
-
+    
 }
 
