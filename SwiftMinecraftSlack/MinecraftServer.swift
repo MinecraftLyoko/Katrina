@@ -69,6 +69,26 @@ class MinecraftServer : NSObject, NSURLSessionDownloadDelegate {
         }
     }
     
+    func getChunkAtBlockCoords(coords: (x:Int, z:Int)) -> RegionChunk {
+        func reduceToChunk(i: Int) -> Int {
+            return Int(round(Double(i) / 16))
+        }
+        
+        func reduceToRegion(i: Int) -> Int {
+            return Int(round(Double(i) / 32))
+        }
+        
+        let chunkCoords = (x: reduceToChunk(coords.x), z:reduceToChunk(coords.z))
+        let regionCoords = (x: reduceToRegion(chunkCoords.x), z: reduceToRegion(chunkCoords.z))
+        
+        let region = Region(regionCoordinates: regionCoords)
+        let chunk = region.chunkAtCoords(chunkCoordinates: chunkCoords)
+        
+        return chunk
+    }
+    
+    
+    
     func launch() {
         let eulaPath = "\(MinecraftServer.bundlePath)/eula.txt"
         if !NSFileManager.defaultManager().fileExistsAtPath(eulaPath) {

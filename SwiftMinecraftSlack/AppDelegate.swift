@@ -17,7 +17,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // Insert code here to initialize your application
 //        MinecraftServer.runJava()
         _ = Player.loadPlayersFromFile()
-
+        
+        let chunk = MinecraftServer.instance.getChunkAtBlockCoords((x: 0, z: -32*16))
+        chunk
         
         
         
