@@ -16,7 +16,7 @@ class MinecraftServer : NSObject, NSURLSessionDownloadDelegate {
     var playerCount: Int = 0
     var maxPlayers: Int = 0
     
-    var players = [Player]()
+    var players = [String: Player]()
     var region: Region? = nil
     
     var serverActive = false
@@ -96,6 +96,8 @@ class MinecraftServer : NSObject, NSURLSessionDownloadDelegate {
             let data = string.dataUsingEncoding(NSUTF8StringEncoding)
             NSFileManager.defaultManager().createFileAtPath(eulaPath, contents: data, attributes: nil)
         }
+        players = Player.loadPlayersFromFile()
+        print(players)
         javaTask.launch()
     }
     
@@ -119,7 +121,9 @@ class MinecraftServer : NSObject, NSURLSessionDownloadDelegate {
     }
     
     func parseLog(log: String) {
+//        print(log)
         if log.containsString("[Server thread/INFO]: ") {
+
             if log.containsString("Done") {
                 serverDidLoad()
             }
@@ -130,8 +134,30 @@ class MinecraftServer : NSObject, NSURLSessionDownloadDelegate {
                 l = l.stringByReplacingOccurrencesOfString(" joined the game\n", withString: "")
 //                NSNotificationCenter.defaultCenter().postNotificationName(NotificationString.UserJoinedGame.rawValue, object: nil, userInfo: ["Player": Player(name: l)])
             }
+            
+            if log.containsString("left the game") {
+                let words = log.characters.split { $0 == " " }.map({String($0)})
+                let playerName = words[3]
+                for (_, player) in players {
+                    if player.username == playerName {
+                        player.didLogOff()
+                        break
+                    }
+                }
+            }
 
             
+        }
+        
+        if log.containsString("[User Authenticator") {
+            if log.containsString("UUID of player") {
+                let words = log.characters.split { $0 == " " }.map({String($0)})
+                let playerName = words[7]
+                let playerUUID = words[9].stringByReplacingOccurrencesOfString("\n", withString: "")
+
+                players[playerUUID]?.username = playerName
+                players[playerUUID]?.didLogOn()
+            }
         }
     }
     
@@ -167,7 +193,7 @@ class MinecraftServer : NSObject, NSURLSessionDownloadDelegate {
     }
     
     func addPlayer(player: Player) {
-        players.append(player)
+        players[player.UUID] = player
         playerCount = players.count
     }
     

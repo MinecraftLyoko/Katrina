@@ -8,7 +8,7 @@
 
 import Foundation
 
-class Entity {
+class Entity : NSObject {
     var ID: String = "" // This tag does not exist for the Player entity.
     var pos: (x: Double, y: Double, z: Double) = (0,0,0) //describing the current X,Y,Z position of the entity.
     var motion: (dX: Double, dY: Double, dZ: Double) = (0,0,0) //describing the current dX,dY,dZ velocity of the entity in meters per tick.
@@ -77,6 +77,11 @@ class Entity {
     }
     
     init(tag: NBTTag) throws {
+        super.init()
+        try parseEntityData(tag)
+    }
+    
+    func parseEntityData(tag: NBTTag) throws {
         if let c = tag.compoundValue {
             for x in c {
                 if let name = x.tagName {
