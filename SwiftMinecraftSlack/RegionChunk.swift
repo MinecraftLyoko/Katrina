@@ -12,7 +12,7 @@ import Foundation
 
 class RegionChunk {
     
-    class func translateDataToChunks(data: NSData, header: RegionHeader) -> [RegionChunk] {
+    class func translateDataToChunks(data: NSData, header: RegionHeader, region: String) -> [RegionChunk] {
         var chunks = [RegionChunk]()
         
         for loc in header.locations {
@@ -20,7 +20,7 @@ class RegionChunk {
             if subdata.length == 0 {
                 continue
             }
-            chunks.append(RegionChunk(data: subdata))
+            chunks.append(RegionChunk(data: subdata, region: region))
             break
         }
         return chunks
@@ -43,15 +43,20 @@ class RegionChunk {
     var chunkLocation: (x: Int, z: Int)?
     var inhabitedTime: Int?
     var lastUpdate: Int?
-    var biomes: [NSData]?
-    var entities: [Entity]?
-    var sections: [Section]?
-    var tileEntities: [TileEntity]?
-    var heightMap: [Int]?
+    var biomes = [NSData]()
+    var entities = [Entity]()
+    var sections = [Section]()
+    var tileEntities = [TileEntity]()
+    var heightMap = [Int]()
 
+    var regionFileName: String = ""
     
-    init(data: NSData) {
-
+    var description: String {
+        return chunkLocation.debugDescription
+    }
+    
+    init(data: NSData, region: String) {
+        regionFileName = region
         
         var len: UInt32 = 0
         data.subdataWithRange(NSRange(location: 0, length: 4)).getBytes(&len, length: 4)
@@ -82,7 +87,9 @@ class RegionChunk {
                             if let name = y.tagName {
                                 switch name {
                                 case "Biomes":
-                                    biomes = y.byteArrayValue
+                                    if let b = y.byteArrayValue {
+                                        biomes = b
+                                    }
                                 case "LightPopulated":
                                     if let b = y.byteValue {
                                         var truthy: Int = -1
@@ -112,7 +119,7 @@ class RegionChunk {
                                         for entityTag in l {
                                             do {
                                             let entity = try Entity(tag: entityTag)
-                                            entities?.append(entity)
+                                            entities.append(entity)
                                             } catch {
                                                 print("threw")
                                             }
@@ -122,14 +129,14 @@ class RegionChunk {
                                     if let l = y.listValue {
                                         for sectionTag in l {
                                             let section = Section(tag: sectionTag)
-                                            sections?.append(section)
+                                            sections.append(section)
                                         }
                                     }
                                 case "TileEntity":
                                     if let l = y.listValue {
                                         for tileEntTag in l {
                                             let tileEnt = TileEntity(tag: tileEntTag)
-                                            tileEntities?.append(tileEnt)
+                                            tileEntities.append(tileEnt)
                                         }
                                     }
                                 default: break
@@ -148,6 +155,30 @@ class RegionChunk {
                 }
             }
         }
+    }
+    
+    func updateChunk() {
+        let region = Region(regionFileName: self.regionFileName)
+        let newChunk = region.chunkAtCoords(chunkCoordinates: self.chunkLocation!)
+        
+        self.chunkLength = newChunk.chunkLength
+        self.compression = newChunk.compression
+        self.chunkData = newChunk.chunkData
+        self.chunkNBT = newChunk.chunkNBT
+
+        self.lightPopulated = newChunk.lightPopulated
+        self.terrainPopulated = newChunk.terrainPopulated
+        self.inhabitedTime = newChunk.inhabitedTime
+        self.lastUpdate = newChunk.lastUpdate
+        self.biomes = newChunk.biomes
+        self.entities = newChunk.entities
+        self.sections = newChunk.sections
+        self.tileEntities = newChunk.tileEntities
+        self.heightMap = newChunk.heightMap
+        
+        
+
+        
     }
     
 }

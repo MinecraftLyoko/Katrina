@@ -46,7 +46,7 @@ class Player : Entity {
     var xpTotal: Int = 0
     var xpSeed: Int = 0
     
-    var UDID: String
+    var UUID: String
     var username: String = ""
     
     var walkSpeed: Float = 0.1 //The walking speed, always 0.1.
@@ -57,9 +57,15 @@ class Player : Entity {
     var mayBuild: Bool = true //true if the player can place and destroy blocks.
     var instabuild: Bool = false //true if the player can instantly destroy blocks.
     
+    var isOnline: Bool = false
+    var chunk: RegionChunk?
+    
+    override var description: String {
+       return "Player \(username): \(self.UUID)"
+    }
     
     init(data: NSData, playerId: String) throws {
-        UDID = playerId
+        UUID = playerId
         if let d = data.gzipInflate() {
             let nbt = NBTTag(data: d)
             try super.init(tag: nbt)
@@ -181,6 +187,21 @@ class Player : Entity {
         }
     }
     
+    private var updateTimer: NSTimer = NSTimer()
+    
+    func didLogOn() {
+        print("did log on \(username)")
+        
+//        updateTimer = NSTimer(timeInterval: 1, target: self, selector: "updatePlayer:", userInfo: nil, repeats: true)
+//        isOnline = true
+//        NSRunLoop.mainRunLoop().addTimer(updateTimer, forMode: NSDefaultRunLoopMode)
+    }
+    
+    func didLogOff() {
+        isOnline = false
+//        updateTimer.invalidate()
+    }
+    
     func parseAbilities(c: [NBTTag]) {
         for x in c {
             if let name = x.tagName {
@@ -219,9 +240,28 @@ class Player : Entity {
         }
     }
     
+    func updatePlayer(timer: NSTimer) {
+        print("updating player \(username) \(pos)")
+        let filename = "\(MinecraftServer.bundlePath)/world/playerdata/\(UUID).dat"
+        if let c = NSData(contentsOfURL: NSURL(fileURLWithPath: filename)) {
+            do {
+//                let oldPos = self.pos
+                
+                if let d = c.gzipInflate() {
+                    let nbt = NBTTag(data: d)
+                    try self.parseEntityData(nbt)
+                    self.parsePlayerData(nbt)
+                } else {
+                    throw PlayerError.NonValidPlayerData
+                }
+            } catch {
+                print("error updating player")
+            }
+        }
+    }
     
-    class func loadPlayersFromFile() -> [Player] {
-        var players = [Player]()
+    class func loadPlayersFromFile() -> [String: Player] {
+        var players = [String: Player]()
         
         let playerDataPath = "\(MinecraftServer.bundlePath)/world/playerdata"
         do {
@@ -231,7 +271,7 @@ class Player : Entity {
                     let playerId = path.characters.split { $0 == "." }.map({String($0)})[0]
                     
                     do {
-                        try players.append(Player(data: c, playerId: playerId))
+                        try players[playerId] = Player(data: c, playerId: playerId)
                     } catch {
                         print("player data incorrect")
                     }
