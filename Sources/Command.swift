@@ -20,10 +20,10 @@ class Command {
                     let data = handle.availableData
                     if let str = NSString(data: data, encoding: NSUTF8StringEncoding) as? String {
                         logs.append(str)
-                        handledResponses++
-                        
+                        handledResponses += 1
+
                     }
-                    
+
                     if handledResponses >= responses {
                         MinecraftServer.instance.out🚿.fileHandleForReading.readabilityHandler = oldHandler
                         if let block = runBlock {
@@ -34,8 +34,8 @@ class Command {
                 MinecraftServer.instance.in🚿.fileHandleForWriting.writeData(data)
             }
         }
-        
-        
+
+
         if MinecraftServer.instance.serverActive {
             block()
         } else {
@@ -44,39 +44,39 @@ class Command {
             })
         }
     }
-    
-    
+
+
     class func list() {
         runCommand("list", responses: 2) { (logs) -> Void in
             var num = logs[0]
             var players = logs[1]
-            
+
             let range = Range<String.Index>(start: num.startIndex.advancedBy(43), end: num.endIndex)
             num = num.substringWithRange(range)
             num = num.stringByReplacingOccurrencesOfString(" players online:\n", withString: "")
             let numArr = num.characters.split { $0 == "/" }.map({String($0)})
-            
-            
+
+
             let playerRange = Range<String.Index>(start: players.startIndex.advancedBy(33), end: players.endIndex)
             players = players.substringWithRange(playerRange)
             players = players.stringByReplacingOccurrencesOfString("\n", withString: "")
-            
-            
+
+
             MinecraftServer.instance.playerCount = Int(numArr[0])!
             MinecraftServer.instance.maxPlayers = Int(numArr[1])!
             print(MinecraftServer.instance)
         }
     }
-    
+
     class func stop() {
         runCommand("stop", responses: 0) { (logs) -> Void in
             print("stopping server")
-            
+
         }
     }
-    
+
     class func op(player: String) {
         runCommand("op \(player)", responses: 0, runBlock: nil)
     }
-    
+
 }
