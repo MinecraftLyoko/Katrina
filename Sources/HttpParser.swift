@@ -7,11 +7,11 @@
 import Foundation
 
 class HttpParser {
-    
+
     func err(reason: String) -> NSError {
         return NSError(domain: "HttpParser", code: 0, userInfo: [NSLocalizedDescriptionKey : reason])
     }
-    
+
     func nextHttpRequest(socket: CInt, error:NSErrorPointer = nil) -> HttpRequest? {
         if let statusLine = nextLine(socket, error: error) {
             let statusTokens = statusLine.componentsSeparatedByString(" ")
@@ -37,7 +37,7 @@ class HttpParser {
         }
         return nil
     }
-    
+
     private func extractUrlParams(url: String) -> [(String, String)] {
         if let query = url.componentsSeparatedByString("?").last {
             return query.componentsSeparatedByString("&").map { (param:String) -> (String, String) in
@@ -52,7 +52,7 @@ class HttpParser {
         }
         return []
     }
-    
+
     private func nextBody(socket: CInt, size: Int , error:NSErrorPointer) -> String? {
         var body = ""
         var counter = 0;
@@ -63,11 +63,11 @@ class HttpParser {
                 return nil
             }
             body.append(UnicodeScalar(c))
-            counter++;
+            counter += 1
         }
         return body
     }
-    
+
     private func nextHeaders(socket: CInt, error:NSErrorPointer) -> Dictionary<String, String>? {
         var headers = Dictionary<String, String>()
         while let headerLine = nextLine(socket, error: error) {
@@ -88,14 +88,14 @@ class HttpParser {
         }
         return nil
     }
-    
+
     private func nextInt8(socket: CInt) -> Int {
         var buffer = [UInt8](count: 1, repeatedValue: 0);
         let next = recv(socket as Int32, &buffer, Int(buffer.count), 0)
         if next <= 0 { return next }
         return Int(buffer[0])
     }
-    
+
     private func nextLine(socket: CInt, error:NSErrorPointer) -> String? {
         var characters: String = ""
         var n = 0
@@ -109,7 +109,7 @@ class HttpParser {
         }
         return characters
     }
-    
+
     func supportsKeepAlive(headers: Dictionary<String, String>) -> Bool {
         if let value = headers["connection"] {
             return "keep-alive" == value.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet()).lowercaseString

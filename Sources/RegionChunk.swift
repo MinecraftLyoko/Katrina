@@ -11,10 +11,10 @@ import Foundation
 
 
 class RegionChunk {
-    
+
     class func translateDataToChunks(data: NSData, header: RegionHeader, region: String) -> [RegionChunk] {
         var chunks = [RegionChunk]()
-        
+
         for loc in header.locations {
             let subdata = data.subdataWithRange(NSRange(location: loc.offset.hashValue, length: loc.length.hashValue))
             if subdata.length == 0 {
@@ -25,18 +25,18 @@ class RegionChunk {
         }
         return chunks
     }
-    
+
     enum ChunkCompression: Int {
         case GZIP = 1
         case ZLIB = 2
     }
-    
+
     var chunkLength: UInt32
     var compression: ChunkCompression
     var chunkData: NSData
     var chunkNBT: NBTTag
-    
-    
+
+
 
     var lightPopulated: Bool?
     var terrainPopulated: Bool?
@@ -50,30 +50,30 @@ class RegionChunk {
     var heightMap = [Int]()
 
     var regionFileName: String = ""
-    
+
     var description: String {
         return chunkLocation.debugDescription
     }
-    
+
     init(data: NSData, region: String) {
         regionFileName = region
-        
+
         var len: UInt32 = 0
         data.subdataWithRange(NSRange(location: 0, length: 4)).getBytes(&len, length: 4)
         chunkLength = len
-        
+
         var comp: Int = 0
         data.subdataWithRange(NSRange(location: 4, length: 1)).getBytes(&comp, length: 1)
         compression = ChunkCompression(rawValue: comp)!
-        
+
         chunkData = data.subdataWithRange(NSRange(location: 5, length: data.length - 5))
-        
-        chunkData = chunkData.zlibInflate()
+
+        chunkData = chunkData.zlibInflate()!
         chunkNBT = NBTTag(data: chunkData)
-        
+
         processChunk()
     }
-    
+
     private func processChunk() {
         if let c = chunkNBT.compoundValue {
             for x in c {
@@ -95,8 +95,8 @@ class RegionChunk {
                                         var truthy: Int = -1
                                         b.getBytes(&truthy, length: 1)
                                         lightPopulated = Bool(truthy)
-                                        
-                                        
+
+
                                     }
                                 case "TerrainPopulated":
                                     if let b = y.byteValue {
@@ -141,26 +141,26 @@ class RegionChunk {
                                     }
                                 default: break
                                 }
-                                
+
                             }
-                            
+
                         }
-                        
+
                         if foundPos {
                             chunkLocation = tempPos
                         }
-                        
-                        
+
+
                     }
                 }
             }
         }
     }
-    
+
     func updateChunk() {
         let region = Region(regionFileName: self.regionFileName)
         let newChunk = region.chunkAtCoords(chunkCoordinates: self.chunkLocation!)
-        
+
         self.chunkLength = newChunk.chunkLength
         self.compression = newChunk.compression
         self.chunkData = newChunk.chunkData
@@ -175,10 +175,10 @@ class RegionChunk {
         self.sections = newChunk.sections
         self.tileEntities = newChunk.tileEntities
         self.heightMap = newChunk.heightMap
-        
-        
 
-        
+
+
+
     }
-    
+
 }
