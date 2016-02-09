@@ -9,3 +9,6 @@
 
 
 MinecraftServer.runJava()
+while true {
+    
+}
