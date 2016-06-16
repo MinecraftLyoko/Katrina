@@ -1,0 +1,281 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		__src_cc_ref_Sources/Command.swift /* Command.swift in Sources */ = {isa = PBXBuildFile; fileRef = __PBXFileRef_Sources/Command.swift /* Command.swift */; };
+		__src_cc_ref_Sources/HttpHandlers.swift /* HttpHandlers.swift in Sources */ = {isa = PBXBuildFile; fileRef = __PBXFileRef_Sources/HttpHandlers.swift /* HttpHandlers.swift */; };
+		__src_cc_ref_Sources/HttpParser.swift /* HttpParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = __PBXFileRef_Sources/HttpParser.swift /* HttpParser.swift */; };
+		__src_cc_ref_Sources/HttpRequest.swift /* HttpRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = __PBXFileRef_Sources/HttpRequest.swift /* HttpRequest.swift */; };
+		__src_cc_ref_Sources/HttpResponse.swift /* HttpResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = __PBXFileRef_Sources/HttpResponse.swift /* HttpResponse.swift */; };
+		__src_cc_ref_Sources/HttpServer.swift /* HttpServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = __PBXFileRef_Sources/HttpServer.swift /* HttpServer.swift */; };
+		__src_cc_ref_Sources/MinecraftServer.swift /* MinecraftServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = __PBXFileRef_Sources/MinecraftServer.swift /* MinecraftServer.swift */; };
+		"__src_cc_ref_Sources/NSData+Compression.swift" /* NSData+Compression.swift in Sources */ = {isa = PBXBuildFile; fileRef = "__PBXFileRef_Sources/NSData+Compression.swift" /* NSData+Compression.swift */; };
+		"__src_cc_ref_Sources/NSData+toBool.swift" /* NSData+toBool.swift in Sources */ = {isa = PBXBuildFile; fileRef = "__PBXFileRef_Sources/NSData+toBool.swift" /* NSData+toBool.swift */; };
+		__src_cc_ref_Sources/NotificationString.swift /* NotificationString.swift in Sources */ = {isa = PBXBuildFile; fileRef = __PBXFileRef_Sources/NotificationString.swift /* NotificationString.swift */; };
+		__src_cc_ref_Sources/Server.swift /* Server.swift in Sources */ = {isa = PBXBuildFile; fileRef = __PBXFileRef_Sources/Server.swift /* Server.swift */; };
+		__src_cc_ref_Sources/Socket.swift /* Socket.swift in Sources */ = {isa = PBXBuildFile; fileRef = __PBXFileRef_Sources/Socket.swift /* Socket.swift */; };
+		__src_cc_ref_Sources/main.swift /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = __PBXFileRef_Sources/main.swift /* main.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		__PBXFileRef_Package.swift /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
+		__PBXFileRef_Sources/Command.swift /* Command.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Command.swift; sourceTree = "<group>"; };
+		__PBXFileRef_Sources/HttpHandlers.swift /* HttpHandlers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpHandlers.swift; sourceTree = "<group>"; };
+		__PBXFileRef_Sources/HttpParser.swift /* HttpParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpParser.swift; sourceTree = "<group>"; };
+		__PBXFileRef_Sources/HttpRequest.swift /* HttpRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpRequest.swift; sourceTree = "<group>"; };
+		__PBXFileRef_Sources/HttpResponse.swift /* HttpResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpResponse.swift; sourceTree = "<group>"; };
+		__PBXFileRef_Sources/HttpServer.swift /* HttpServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpServer.swift; sourceTree = "<group>"; };
+		__PBXFileRef_Sources/MinecraftServer.swift /* MinecraftServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MinecraftServer.swift; sourceTree = "<group>"; };
+		"__PBXFileRef_Sources/NSData+Compression.swift" /* NSData+Compression.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSData+Compression.swift"; sourceTree = "<group>"; };
+		"__PBXFileRef_Sources/NSData+toBool.swift" /* NSData+toBool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSData+toBool.swift"; sourceTree = "<group>"; };
+		__PBXFileRef_Sources/NotificationString.swift /* NotificationString.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationString.swift; sourceTree = "<group>"; };
+		__PBXFileRef_Sources/Server.swift /* Server.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Server.swift; sourceTree = "<group>"; };
+		__PBXFileRef_Sources/Socket.swift /* Socket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Socket.swift; sourceTree = "<group>"; };
+		__PBXFileRef_Sources/main.swift /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		__PBXFileRef_SwiftMinecraftSlack.xcodeproj/Configs/Project.xcconfig /* Project.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Project.xcconfig; path = SwiftMinecraftSlack.xcodeproj/Configs/Project.xcconfig; sourceTree = "<group>"; };
+		"_____Product_SwiftMinecraftSlack" /* SwiftMinecraftSlack */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; path = SwiftMinecraftSlack; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		"___LinkPhase_SwiftMinecraftSlack" /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		"___RootGroup_" = {
+			isa = PBXGroup;
+			children = (
+				__PBXFileRef_Package.swift /* Package.swift */,
+				"_____Configs_" /* Configs */,
+				"_____Sources_" /* Sources */,
+				"____Products_" /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		"____Products_" /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				"_____Product_SwiftMinecraftSlack" /* SwiftMinecraftSlack */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		"_____Configs_" /* Configs */ = {
+			isa = PBXGroup;
+			children = (
+				__PBXFileRef_SwiftMinecraftSlack.xcodeproj/Configs/Project.xcconfig /* Project.xcconfig */,
+			);
+			name = Configs;
+			sourceTree = "<group>";
+		};
+		"_____Sources_" /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				"_______Group_SwiftMinecraftSlack" /* SwiftMinecraftSlack */,
+			);
+			name = Sources;
+			sourceTree = "<group>";
+		};
+		"_______Group_SwiftMinecraftSlack" /* SwiftMinecraftSlack */ = {
+			isa = PBXGroup;
+			children = (
+				__PBXFileRef_Sources/Command.swift /* Command.swift */,
+				__PBXFileRef_Sources/HttpHandlers.swift /* HttpHandlers.swift */,
+				__PBXFileRef_Sources/HttpParser.swift /* HttpParser.swift */,
+				__PBXFileRef_Sources/HttpRequest.swift /* HttpRequest.swift */,
+				__PBXFileRef_Sources/HttpResponse.swift /* HttpResponse.swift */,
+				__PBXFileRef_Sources/HttpServer.swift /* HttpServer.swift */,
+				__PBXFileRef_Sources/main.swift /* main.swift */,
+				__PBXFileRef_Sources/MinecraftServer.swift /* MinecraftServer.swift */,
+				__PBXFileRef_Sources/NotificationString.swift /* NotificationString.swift */,
+				"__PBXFileRef_Sources/NSData+Compression.swift" /* NSData+Compression.swift */,
+				"__PBXFileRef_Sources/NSData+toBool.swift" /* NSData+toBool.swift */,
+				__PBXFileRef_Sources/Server.swift /* Server.swift */,
+				__PBXFileRef_Sources/Socket.swift /* Socket.swift */,
+			);
+			name = SwiftMinecraftSlack;
+			path = Sources;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		"______Target_SwiftMinecraftSlack" /* SwiftMinecraftSlack */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = "_______Confs_SwiftMinecraftSlack" /* Build configuration list for PBXNativeTarget "SwiftMinecraftSlack" */;
+			buildPhases = (
+				CompilePhase_SwiftMinecraftSlack /* Sources */,
+				"___LinkPhase_SwiftMinecraftSlack" /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SwiftMinecraftSlack;
+			productName = SwiftMinecraftSlack;
+			productReference = "_____Product_SwiftMinecraftSlack" /* SwiftMinecraftSlack */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		__RootObject_ /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0800;
+				TargetAttributes = {
+					"______Target_SwiftMinecraftSlack" = {
+						LastSwiftMigration = 0800;
+					};
+				};
+			};
+			buildConfigurationList = "___RootConfs_" /* Build configuration list for PBXProject "SwiftMinecraftSlack" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = "___RootGroup_";
+			productRefGroup = "____Products_" /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				"______Target_SwiftMinecraftSlack" /* SwiftMinecraftSlack */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		CompilePhase_SwiftMinecraftSlack /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 0;
+			files = (
+				__src_cc_ref_Sources/Command.swift /* Command.swift in Sources */,
+				__src_cc_ref_Sources/HttpHandlers.swift /* HttpHandlers.swift in Sources */,
+				__src_cc_ref_Sources/HttpParser.swift /* HttpParser.swift in Sources */,
+				__src_cc_ref_Sources/HttpRequest.swift /* HttpRequest.swift in Sources */,
+				__src_cc_ref_Sources/HttpResponse.swift /* HttpResponse.swift in Sources */,
+				__src_cc_ref_Sources/HttpServer.swift /* HttpServer.swift in Sources */,
+				__src_cc_ref_Sources/main.swift /* main.swift in Sources */,
+				__src_cc_ref_Sources/MinecraftServer.swift /* MinecraftServer.swift in Sources */,
+				__src_cc_ref_Sources/NotificationString.swift /* NotificationString.swift in Sources */,
+				"__src_cc_ref_Sources/NSData+Compression.swift" /* NSData+Compression.swift in Sources */,
+				"__src_cc_ref_Sources/NSData+toBool.swift" /* NSData+toBool.swift in Sources */,
+				__src_cc_ref_Sources/Server.swift /* Server.swift in Sources */,
+				__src_cc_ref_Sources/Socket.swift /* Socket.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		_ReleaseConf_SwiftMinecraftSlack /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				HEADER_SEARCH_PATHS = "/Users/rhett/Developer/Source/SwiftMinecraftSlack/Packages/SwiftZlib-1.0.2";
+				LD_RUNPATH_SEARCH_PATHS = "$(TOOLCHAIN_DIR)/usr/lib/swift/macosx @executable_path";
+				OTHER_LDFLAGS = "$(inherited)";
+				OTHER_SWIFT_FLAGS = "$(inherited)";
+				SWIFT_FORCE_DYNAMIC_LINK_STDLIB = YES;
+				SWIFT_FORCE_STATIC_LINK_STDLIB = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_VERSION = 3.0;
+			};
+			name = Release;
+		};
+		"___DebugConf_SwiftMinecraftSlack" /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				HEADER_SEARCH_PATHS = "/Users/rhett/Developer/Source/SwiftMinecraftSlack/Packages/SwiftZlib-1.0.2";
+				LD_RUNPATH_SEARCH_PATHS = "$(TOOLCHAIN_DIR)/usr/lib/swift/macosx @executable_path";
+				OTHER_LDFLAGS = "$(inherited)";
+				OTHER_SWIFT_FLAGS = "$(inherited)";
+				SWIFT_FORCE_DYNAMIC_LINK_STDLIB = YES;
+				SWIFT_FORCE_STATIC_LINK_STDLIB = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
+			};
+			name = Debug;
+		};
+		"_____Release_" /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = __PBXFileRef_SwiftMinecraftSlack.xcodeproj/Configs/Project.xcconfig /* Project.xcconfig */;
+			buildSettings = {
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+			};
+			name = Release;
+		};
+		"_______Debug_" /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = __PBXFileRef_SwiftMinecraftSlack.xcodeproj/Configs/Project.xcconfig /* Project.xcconfig */;
+			buildSettings = {
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				ONLY_ACTIVE_ARCH = YES;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		"___RootConfs_" /* Build configuration list for PBXProject "SwiftMinecraftSlack" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				"_______Debug_" /* Debug */,
+				"_____Release_" /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		"_______Confs_SwiftMinecraftSlack" /* Build configuration list for PBXNativeTarget "SwiftMinecraftSlack" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				"___DebugConf_SwiftMinecraftSlack" /* Debug */,
+				_ReleaseConf_SwiftMinecraftSlack /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = __RootObject_ /* Project object */;
+}

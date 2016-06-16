@@ -18,11 +18,11 @@ class Server {
         Server.routes()
         MinecraftServer.runJava()
         
-        instance.start()
+        _ = instance.start()
     }
     
     class private func routes() {
-        instance["/hello"] = { .OK(.HTML("You asked for " + $0.url)) }
+        instance["/hello"] = { .ok(.html("You asked for " + $0.url)) }
     }
     
 }

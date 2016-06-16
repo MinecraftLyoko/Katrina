@@ -1,5 +1,4 @@
 
-import SwiftZlib
 import Foundation
 
 // extension NSData {

@@ -8,19 +8,19 @@ import Foundation
 
 public enum HttpResponseBody {
     
-    case JSON(AnyObject)
-    case XML(AnyObject)
-    case PLIST(AnyObject)
-    case HTML(String)
-    case STRING(String)
+    case json(AnyObject)
+    case xml(AnyObject)
+    case plist(AnyObject)
+    case html(String)
+    case string(String)
     
     func data() -> String? {
         switch self {
-        case .JSON(let object):
-            if NSJSONSerialization.isValidJSONObject(object) {
+        case .json(let object):
+            if JSONSerialization.isValidJSONObject(object) {
                 do {
-                    let json = try NSJSONSerialization.dataWithJSONObject(object, options: NSJSONWritingOptions.PrettyPrinted)
-                    if let nsString = NSString(data: json, encoding: NSUTF8StringEncoding) {
+                    let json = try JSONSerialization.data(withJSONObject: object, options: JSONSerialization.WritingOptions.prettyPrinted)
+                    if let nsString = NSString(data: json, encoding: String.Encoding.utf8.rawValue) {
                         return nsString as String
                     }
                 } catch let serializationError as NSError {
@@ -28,14 +28,14 @@ public enum HttpResponseBody {
                 }
             }
             return "Invalid object to serialise."
-        case .XML(_):
+        case .xml(_):
             return "XML serialization not supported."
-        case .PLIST(let object):
-            let format = NSPropertyListFormat.XMLFormat_v1_0
-            if NSPropertyListSerialization.propertyList(object, isValidForFormat: format) {
+        case .plist(let object):
+            let format = PropertyListSerialization.PropertyListFormat.xmlFormat_v1_0
+            if PropertyListSerialization.propertyList(object, isValidFor: format) {
                 do {
-                    let plist = try NSPropertyListSerialization.dataWithPropertyList(object, format: format, options: 0)
-                    if let nsString = NSString(data: plist, encoding: NSUTF8StringEncoding) {
+                    let plist = try PropertyListSerialization.data(fromPropertyList: object, format: format, options: 0)
+                    if let nsString = NSString(data: plist, encoding: String.Encoding.utf8.rawValue) {
                         return nsString as String
                     }
                 } catch let serializationError as NSError {
@@ -43,9 +43,9 @@ public enum HttpResponseBody {
                 }
             }
             return "Invalid object to serialise."
-        case .STRING(let body):
+        case .string(let body):
             return body
-        case .HTML(let body):
+        case .html(let body):
             return "<html><body>\(body)</body></html>"
         }
     }
@@ -53,39 +53,39 @@ public enum HttpResponseBody {
 
 public enum HttpResponse {
     
-    case OK(HttpResponseBody), Created, Accepted
-    case MovedPermanently(String)
-    case BadRequest, Unauthorized, Forbidden, NotFound
-    case InternalServerError
-    case RAW(Int, String, [String:String]?, NSData)
+    case ok(HttpResponseBody), created, accepted
+    case movedPermanently(String)
+    case badRequest, unauthorized, forbidden, notFound
+    case internalServerError
+    case raw(Int, String, [String:String]?, Data)
     
     func statusCode() -> Int {
         switch self {
-        case .OK(_)                 : return 200
-        case .Created               : return 201
-        case .Accepted              : return 202
-        case .MovedPermanently      : return 301
-        case .BadRequest            : return 400
-        case .Unauthorized          : return 401
-        case .Forbidden             : return 403
-        case .NotFound              : return 404
-        case .InternalServerError   : return 500
-        case .RAW(let code,_,_,_)   : return code
+        case .ok(_)                 : return 200
+        case .created               : return 201
+        case .accepted              : return 202
+        case .movedPermanently      : return 301
+        case .badRequest            : return 400
+        case .unauthorized          : return 401
+        case .forbidden             : return 403
+        case .notFound              : return 404
+        case .internalServerError   : return 500
+        case .raw(let code,_,_,_)   : return code
         }
     }
     
     func reasonPhrase() -> String {
         switch self {
-        case .OK(_)                 : return "OK"
-        case .Created               : return "Created"
-        case .Accepted              : return "Accepted"
-        case .MovedPermanently      : return "Moved Permanently"
-        case .BadRequest            : return "Bad Request"
-        case .Unauthorized          : return "Unauthorized"
-        case .Forbidden             : return "Forbidden"
-        case .NotFound              : return "Not Found"
-        case .InternalServerError   : return "Internal Server Error"
-        case .RAW(_,let pharse,_,_) : return pharse
+        case .ok(_)                 : return "OK"
+        case .created               : return "Created"
+        case .accepted              : return "Accepted"
+        case .movedPermanently      : return "Moved Permanently"
+        case .badRequest            : return "Bad Request"
+        case .unauthorized          : return "Unauthorized"
+        case .forbidden             : return "Forbidden"
+        case .notFound              : return "Not Found"
+        case .internalServerError   : return "Internal Server Error"
+        case .raw(_,let pharse,_,_) : return pharse
         }
     }
     
@@ -93,35 +93,35 @@ public enum HttpResponse {
         var headers = [String:String]()
         headers["Server"] = "Swifter \(HttpServer.VERSION)"
         switch self {
-        case .OK(let body):
+        case .ok(let body):
             switch body {
-            case .JSON(_)   : headers["Content-Type"] = "application/json"
-            case .PLIST(_)  : headers["Content-Type"] = "application/xml"
-            case .XML(_)    : headers["Content-Type"] = "application/xml"
+            case .json(_)   : headers["Content-Type"] = "application/json"
+            case .plist(_)  : headers["Content-Type"] = "application/xml"
+            case .xml(_)    : headers["Content-Type"] = "application/xml"
                 // 'application/xml' vs 'text/xml'
                 // From RFC: http://www.rfc-editor.org/rfc/rfc3023.txt - "If an XML document -- that is, the unprocessed, source XML document -- is readable by casual users,
                 // text/xml is preferable to application/xml. MIME user agents (and web user agents) that do not have explicit
                 // support for text/xml will treat it as text/plain, for example, by displaying the XML MIME entity as plain text.
                 // Application/xml is preferable when the XML MIME entity is unreadable by casual users."
-            case .HTML(_)   : headers["Content-Type"] = "text/html"
-            default:[]
+            case .html(_)   : headers["Content-Type"] = "text/html"
+            default: break
             }
-        case .MovedPermanently(let location): headers["Location"] = location
-        case .RAW(_,_, let rawHeaders,_):
+        case .movedPermanently(let location): headers["Location"] = location
+        case .raw(_,_, let rawHeaders,_):
             if let rawHeaders = rawHeaders {
                 for (k, v) in rawHeaders {
                     headers.updateValue(v, forKey: k)
                 }
             }
-        default:[]
+        default: break
         }
         return headers
     }
     
-    func body() -> NSData? {
+    func body() -> Data? {
         switch self {
-        case .OK(let body)          : return body.data()?.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)
-        case .RAW(_,_,_, let data)  : return data
+        case .ok(let body)          : return body.data()?.data(using: String.Encoding.utf8, allowLossyConversion: false)
+        case .raw(_,_,_, let data)  : return data
         default                     : return nil
         }
     }

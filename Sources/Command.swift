@@ -9,16 +9,16 @@
 import Foundation
 
 class Command {
-    class func runCommand(command: String, responses: Int, runBlock: ((logs: [String]) -> Void)?) {
+    class func runCommand(_ command: String, responses: Int, runBlock: ((logs: [String]) -> Void)?) {
         let block = {
-            if let data = "\(command)\n".dataUsingEncoding(NSUTF8StringEncoding) {
+            if let data = "\(command)\n".data(using: String.Encoding.utf8) {
                 let oldHandler = MinecraftServer.instance.out🚿.fileHandleForReading.readabilityHandler
                 var handledResponses = 0
                 var logs = [String]()
                 MinecraftServer.instance.out🚿.fileHandleForReading.readabilityHandler = { (handle) in
 
                     let data = handle.availableData
-                    if let str = NSString(data: data, encoding: NSUTF8StringEncoding) as? String {
+                    if let str = NSString(data: data, encoding: String.Encoding.utf8.rawValue) as? String {
                         logs.append(str)
                         handledResponses += 1
 
@@ -31,7 +31,7 @@ class Command {
                         }
                     }
                 }
-                MinecraftServer.instance.in🚿.fileHandleForWriting.writeData(data)
+                MinecraftServer.instance.in🚿.fileHandleForWriting.write(data)
             }
         }
 
@@ -39,7 +39,7 @@ class Command {
         if MinecraftServer.instance.serverActive {
             block()
         } else {
-            NSNotificationCenter.defaultCenter().addObserverForName("server is running", object: nil, queue: nil, usingBlock: { (not) -> Void in
+            NotificationCenter.default().addObserver(forName: "server is running" as NSNotification.Name, object: nil, queue: nil, using: { (not) -> Void in
                 block()
             })
         }
@@ -51,15 +51,15 @@ class Command {
             var num = logs[0]
             var players = logs[1]
 
-            let range = Range<String.Index>(start: num.startIndex.advancedBy(43), end: num.endIndex)
-            num = num.substringWithRange(range)
-            num = num.stringByReplacingOccurrencesOfString(" players online:\n", withString: "")
+            let range = (num.index(num.startIndex, offsetBy: 43) ..< num.endIndex)
+            num = num.substring(with: range)
+            num = num.replacingOccurrences(of: " players online:\n", with: "")
             let numArr = num.characters.split { $0 == "/" }.map({String($0)})
 
 
-            let playerRange = Range<String.Index>(start: players.startIndex.advancedBy(33), end: players.endIndex)
-            players = players.substringWithRange(playerRange)
-            players = players.stringByReplacingOccurrencesOfString("\n", withString: "")
+            let playerRange = (players.index(players.startIndex, offsetBy: 33) ..< players.endIndex)
+            players = players.substring(with: playerRange)
+            players = players.replacingOccurrences(of: "\n", with: "")
 
 
             MinecraftServer.instance.playerCount = Int(numArr[0])!
@@ -75,7 +75,7 @@ class Command {
         }
     }
 
-    class func op(player: String) {
+    class func op(_ player: String) {
         runCommand("op \(player)", responses: 0, runBlock: nil)
     }
 
