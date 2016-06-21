@@ -8,10 +8,10 @@
 
 import Foundation
 
-extension NSData {
+extension Data {
     func toBool() -> Bool {
         var a: Int = -1
-        self.getBytes(&a, length: 1)
+        (self as NSData).getBytes(&a, length: 1)
         if a < 0 {
             a = 0
         }
@@ -20,7 +20,7 @@ extension NSData {
     
     func toInt() -> Int {
         var a = Int()
-        self.getBytes(&a, length: 1)
+        (self as NSData).getBytes(&a, length: 1)
         return a
     }
 }
