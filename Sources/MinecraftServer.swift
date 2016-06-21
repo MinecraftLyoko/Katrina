@@ -16,9 +16,6 @@ class MinecraftServer : NSObject, URLSessionDownloadDelegate {
     var playerCount: Int = 0
     var maxPlayers: Int = 0
 
-//    var players = [String: Player]()
-//    var region: Region? = nil
-
     var serverActive = false
     static let bundlePath = Bundle.main().bundlePath + "/Contents/server"
     static let jarPath = "\(MinecraftServer.bundlePath)/minecraft_download.jar"
@@ -68,26 +65,6 @@ class MinecraftServer : NSObject, URLSessionDownloadDelegate {
             }
         }
     }
-//
-//    func getChunkAtBlockCoords(_ coords: (x:Int, z:Int)) -> RegionChunk {
-//        func reduceToChunk(_ i: Int) -> Int {
-//            return Int(round(Double(i) / 16))
-//        }
-//
-//        func reduceToRegion(_ i: Int) -> Int {
-//            return Int(round(Double(i) / 32))
-//        }
-//
-//        let chunkCoords = (x: reduceToChunk(coords.x), z:reduceToChunk(coords.z))
-//        let regionCoords = (x: reduceToRegion(chunkCoords.x), z: reduceToRegion(chunkCoords.z))
-//
-//        let region = Region(regionCoordinates: regionCoords)
-//        let chunk = region.chunkAtCoords(chunkCoordinates: chunkCoords)
-//
-//        return chunk
-//    }
-
-
 
     func launch() {
         let eulaPath = "\(MinecraftServer.bundlePath)/eula.txt"
@@ -98,8 +75,7 @@ class MinecraftServer : NSObject, URLSessionDownloadDelegate {
             let data = string.data(using: String.Encoding.utf8)
             FileManager.default().createFile(atPath: eulaPath, contents: data, attributes: nil)
         }
-//        players = Player.loadPlayersFromFile()
-        
+
         javaTask.launch()
     }
 
@@ -119,11 +95,11 @@ class MinecraftServer : NSObject, URLSessionDownloadDelegate {
 
     func serverDidLoad() {
         serverActive = true
-        NotificationCenter.default().post(name: Notification.Name(rawValue: "server is running"), object: nil)
+        
+        NotificationCenter.default().post(name: Foundation.Notification.Name(rawValue: "server is running"), object: nil)
     }
 
     func parseLog(_ log: String) {
-        //        print(log)
         if log.contains("[Server thread/INFO]: ") {
 
             if log.contains("Done") {
@@ -156,9 +132,7 @@ class MinecraftServer : NSObject, URLSessionDownloadDelegate {
                 print("DEATH!", string, terminator: "")
             }
         }
-
-        //        in🚿.fileHandleForWriting.writeabilityHandler = {(handle) in
-        //        }
+       
     }
 
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
@@ -166,15 +140,6 @@ class MinecraftServer : NSObject, URLSessionDownloadDelegate {
         FileManager.default().createFile(atPath: MinecraftServer.jarPath, contents: data, attributes: nil)
         launch()
     }
-
-    func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
-        // print(bytesWritten, totalBytesExpectedToWrite)
-    }
-
-//    func addPlayer(_ player: Player) {
-//        players[player.UUID] = player
-//        playerCount = players.count
-//    }
 
     override var description: String {
         return "Server running with \(playerCount) of \(maxPlayers)"

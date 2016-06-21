@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum NotificationString: String {
+enum Notification: String {
     case UserJoinedGame = "userJoinedGame"
     case UpdatedInfo = "updatedInfo"
 }
