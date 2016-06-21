@@ -1,6 +1,6 @@
 //
 //  Command.swift
-//  SwiftMinecraftSlack
+//  Katrina
 //
 //  Created by Rhett Rogers on 10/12/15.
 //  Copyright © 2015 Rhett Rogers. All rights reserved.
