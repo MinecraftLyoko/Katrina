@@ -6,9 +6,11 @@
 //  Copyright © 2015 Rhett Rogers. All rights reserved.
 //
 
+import Foundation
 
-
-MinecraftServer.runJava()
+dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0)) {
+    MinecraftServer.runJava()
+}
 while true {
-    
+    sleep(10)
 }

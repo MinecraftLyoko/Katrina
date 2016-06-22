@@ -8,137 +8,173 @@
 
 import Foundation
 
-class MinecraftServer : NSObject, URLSessionDownloadDelegate {
-    let out🚿 = Pipe()
-    let in🚿 = Pipe()
-    let error🚿 = Pipe()
+class MinecraftServer : NSObject, NSURLSessionDownloadDelegate {
+    let out🚿 = NSPipe()
+    let in🚿 = NSPipe()
+    let error🚿 = NSPipe()
 
     var playerCount: Int = 0
     var maxPlayers: Int = 0
-
     var serverActive = false
-    static let bundlePath = Bundle.main().bundlePath + "/Contents/server"
+    
+    lazy var javaTask: NSTask = {
+        let javaTask = NSTask()
+        javaTask.currentDirectoryPath = MinecraftServer.bundlePath
+        javaTask.launchPath = "/usr/bin/java"
+        javaTask.arguments = ["-Xmx1024M", "-Xms1024M", "-jar", MinecraftServer.jarPath, "nogui"]
+        
+        javaTask.standardOutput = self.out🚿
+        javaTask.standardInput = self.in🚿
+        return javaTask
+    }()
+    
+    static let bundlePath = NSBundle.mainBundle().bundlePath + "/Contents/server"
     static let jarPath = "\(MinecraftServer.bundlePath)/minecraft_download.jar"
 
-    let javaTask = Task()
-    static var instance: MinecraftServer = {
+    static var defaultServer: MinecraftServer = {
         let server = MinecraftServer()
-        server.javaTask.currentDirectoryPath = bundlePath
-        server.javaTask.launchPath = "/usr/bin/java"
-        server.javaTask.arguments = ["-Xmx1024M", "-Xms1024M", "-jar", jarPath, "nogui"]
-
-        server.javaTask.standardOutput = server.out🚿
-        server.javaTask.standardInput = server.in🚿
         server.setup🚿()
         return server
     }()
 
-
-    class func runJava() {
-        if !FileManager.default().fileExists(atPath: jarPath) {
-            instance.downloadServer()
-            return
+    class func runJava(forceDownload: Bool = false) {
+        if forceDownload || !NSFileManager.defaultManager().fileExistsAtPath(jarPath) {
+            defaultServer.downloadServer()
+        } else {
+            defaultServer.launch()
         }
-        instance.launch()
     }
-
 
     class func terminateServer() {
-        instance.javaTask.terminate()
+        defaultServer.javaTask.terminate()
     }
 
-    func downloadServer(_ version: String = "latest") {
-        if version == "latest" {
-            if !FileManager.default().fileExists(atPath: MinecraftServer.bundlePath) {
-                do {
-                    try FileManager.default().createDirectory(atPath: MinecraftServer.bundlePath, withIntermediateDirectories: true, attributes: nil)
-                } catch let error as NSError {
-                    print(error)
-                }
+    func latestVersion(callback: ((String?)->Void)?) {
+        guard let versionManifestURL = NSURL(string: "https://launchermeta.mojang.com/mc/game/version_manifest.json") else { callback?(nil)
+            return
+        }
+        
+        let session = NSURLSession(configuration: .defaultSessionConfiguration())
+        let task = session.dataTaskWithURL(versionManifestURL) { data, response, error in
+            guard error == nil, let data = data, jsonData = try? NSJSONSerialization.JSONObjectWithData(data, options: .MutableLeaves) as? [String: AnyObject] else {
+                callback?(nil)
+                return
             }
-
-            if !FileManager.default().fileExists(atPath: MinecraftServer.jarPath) {
-                let URL = Foundation.URL(string: "https://s3.amazonaws.com/Minecraft.Download/versions/1.8.8/minecraft_server.1.8.8.jar")!
-                let session = Foundation.URLSession(configuration: URLSessionConfiguration.default(), delegate: self, delegateQueue: nil)
-                let task = session.downloadTask(with: URL)
-                task.resume()
+            
+            guard let latestObject = jsonData?["latest"] as? [String: String], latestVersion = latestObject["release"] else {
+                callback?(nil)
+                return
+            }
+            
+            callback?(latestVersion)
+        }
+        
+        task.resume()
+    }
+    
+    func downloadServer(version: String = "latest") {
+        if version == "latest" {
+            latestVersion { version in
+                guard let version = version else { return }
+                
+                if !NSFileManager.defaultManager().fileExistsAtPath(MinecraftServer.bundlePath) {
+                    do {
+                        try NSFileManager.defaultManager().createDirectoryAtPath(MinecraftServer.bundlePath, withIntermediateDirectories: true, attributes: nil)
+                    } catch let error as NSError {
+                        print(error)
+                    }
+                }
+                
+                if NSFileManager.defaultManager().fileExistsAtPath(MinecraftServer.jarPath) {
+                    do {
+                        try NSFileManager.defaultManager().removeItemAtPath(MinecraftServer.jarPath)
+                    } catch let error as NSError {
+                        print(error)
+                    }
+                }
+                
+                
+                if let URL = NSURL(string: "https://s3.amazonaws.com/Minecraft.Download/versions/\(version)/minecraft_server.\(version).jar") {
+                    let session = NSURLSession(configuration: NSURLSessionConfiguration.defaultSessionConfiguration(), delegate: self, delegateQueue: nil)
+                    let task = session.downloadTaskWithURL(URL)
+                    task.resume()
+                }
+                
             }
         }
     }
 
     func launch() {
+        killPreviousServersIfTheyExist()
+        
         let eulaPath = "\(MinecraftServer.bundlePath)/eula.txt"
-
-
-        if !FileManager.default().fileExists(atPath: eulaPath) {
+        
+        if !NSFileManager.defaultManager().fileExistsAtPath(eulaPath) {
             let string = "eula=true"
-            let data = string.data(using: String.Encoding.utf8)
-            FileManager.default().createFile(atPath: eulaPath, contents: data, attributes: nil)
+            let data = string.dataUsingEncoding(NSUTF8StringEncoding)
+            NSFileManager.defaultManager().createFileAtPath(eulaPath, contents: data, attributes: nil)
         }
 
         javaTask.launch()
+        print("Starting java task with id \(javaTask.processIdentifier)")
+        NSUserDefaults.standardUserDefaults().setInteger(Int(javaTask.processIdentifier), forKey: "minecraft_task_id")
     }
-
-    func standardOut() {
-        let data = out🚿.fileHandleForReading.availableData
-        if let string: String = NSString(data: data, encoding: String.Encoding.utf8.rawValue) as? String {
-            print(string, terminator: "")
-        }
-    }
-
-    func standardErr() {
-        let data = error🚿.fileHandleForReading.readData(ofLength: 10)
-        if let string: String = NSString(data: data, encoding: String.Encoding.utf8.rawValue) as? String {
-            print(string, terminator: "")
-        }
+    
+    func killPreviousServersIfTheyExist() {
+        let taskID = NSUserDefaults.standardUserDefaults().integerForKey("minecraft_task_id")
+        
+        let task = NSTask()
+        task.launchPath = "/bin/bash"
+        task.arguments = ["-c", "kill \(taskID)"]
+        task.launch()
+        task.waitUntilExit()
+        
     }
 
     func serverDidLoad() {
         serverActive = true
         
-        NotificationCenter.default().post(name: Foundation.Notification.Name(rawValue: "server is running"), object: nil)
+        NSNotificationCenter.defaultCenter().postNotificationName("server is running", object: nil)
     }
 
-    func parseLog(_ log: String) {
-        if log.contains("[Server thread/INFO]: ") {
-
-            if log.contains("Done") {
+    func parseLog(log: String) {
+        if log.containsString("[Server thread/INFO]: ") {
+            if log.containsString("Done") {
                 serverDidLoad()
             }
 
-            if log.contains("joined the game\n") {
-                let range = (log.characters.index(log.startIndex, offsetBy: 33) ..< log.endIndex)
-                var l = log.substring(with: range)
-                l = l.replacingOccurrences(of: " joined the game\n", with: "")
+            if log.containsString("joined the game\n") {
+                let range = log.startIndex.advancedBy(33) ..< log.endIndex
+                _ = log.substringWithRange(range).stringByReplacingOccurrencesOfString(" joined the game\n", withString: "")
+                
             }
-
         }
-
     }
 
     func setup🚿() {
-        out🚿.fileHandleForReading.readabilityHandler = {(handle) in
-            let data = handle.availableData
-            if let string: String = NSString(data: data, encoding: String.Encoding.utf8.rawValue) as? String {
+        out🚿.fileHandleForReading.readabilityHandler = { handle in
+            if let string = String(data: handle.availableData, encoding: NSUTF8StringEncoding) {
                 self.parseLog(string)
                 print(string, terminator: "")
-
             }
         }
 
-        error🚿.fileHandleForReading.readabilityHandler = {(handle) in
-            let data = handle.availableData
-            if let string: String = NSString(data: data, encoding: String.Encoding.utf8.rawValue) as? String {
+        error🚿.fileHandleForReading.readabilityHandler = { handle in
+            if let string = String(data: handle.availableData, encoding: NSUTF8StringEncoding) {
                 print("DEATH!", string, terminator: "")
             }
         }
-       
     }
 
-    func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
-        let data = try? Data(contentsOf: location)
-        FileManager.default().createFile(atPath: MinecraftServer.jarPath, contents: data, attributes: nil)
+    func URLSession(session: NSURLSession, downloadTask: NSURLSessionDownloadTask, didFinishDownloadingToURL location: NSURL) {
+        guard let data = NSData(contentsOfURL: location) else { return }
+        
+        NSFileManager.defaultManager().createFileAtPath(MinecraftServer.jarPath, contents: data, attributes: nil)
         launch()
+    }
+    
+    func URLSession(session: NSURLSession, downloadTask: NSURLSessionDownloadTask, didWriteData bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
+        print("\rDownload Progress: \(Int((Double(totalBytesWritten) / Double(totalBytesExpectedToWrite)) * 100))%")
     }
 
     override var description: String {
