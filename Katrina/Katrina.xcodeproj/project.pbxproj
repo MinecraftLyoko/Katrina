@@ -7,10 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		590C56691D1A099C001A7215 /* Command.swift in Sources */ = {isa = PBXBuildFile; fileRef = 590C56651D1A099C001A7215 /* Command.swift */; };
-		590C566A1D1A099C001A7215 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 590C56661D1A099C001A7215 /* main.swift */; };
-		590C566B1D1A099C001A7215 /* MinecraftServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 590C56671D1A099C001A7215 /* MinecraftServer.swift */; };
-		590C566C1D1A099C001A7215 /* NotificationString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 590C56681D1A099C001A7215 /* NotificationString.swift */; };
+		59604E6F1D45B72A00271015 /* Command.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59604E6B1D45B72A00271015 /* Command.swift */; };
+		59604E701D45B72A00271015 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59604E6C1D45B72A00271015 /* main.swift */; };
+		59604E711D45B72A00271015 /* MinecraftServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59604E6D1D45B72A00271015 /* MinecraftServer.swift */; };
+		59604E721D45B72A00271015 /* NotificationString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59604E6E1D45B72A00271015 /* NotificationString.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -27,10 +27,10 @@
 
 /* Begin PBXFileReference section */
 		590C565B1D1A0988001A7215 /* Katrina */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Katrina; sourceTree = BUILT_PRODUCTS_DIR; };
-		590C56651D1A099C001A7215 /* Command.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Command.swift; path = ../../Sources/Command.swift; sourceTree = "<group>"; };
-		590C56661D1A099C001A7215 /* main.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = main.swift; path = ../../Sources/main.swift; sourceTree = "<group>"; };
-		590C56671D1A099C001A7215 /* MinecraftServer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MinecraftServer.swift; path = ../../Sources/MinecraftServer.swift; sourceTree = "<group>"; };
-		590C56681D1A099C001A7215 /* NotificationString.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NotificationString.swift; path = ../../Sources/NotificationString.swift; sourceTree = "<group>"; };
+		59604E6B1D45B72A00271015 /* Command.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Command.swift; sourceTree = "<group>"; };
+		59604E6C1D45B72A00271015 /* main.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		59604E6D1D45B72A00271015 /* MinecraftServer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MinecraftServer.swift; sourceTree = "<group>"; };
+		59604E6E1D45B72A00271015 /* NotificationString.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationString.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -47,7 +47,7 @@
 		590C56521D1A0988001A7215 = {
 			isa = PBXGroup;
 			children = (
-				590C565D1D1A0988001A7215 /* Katrina */,
+				59604E6A1D45B72A00271015 /* Sources */,
 				590C565C1D1A0988001A7215 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -60,15 +60,16 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		590C565D1D1A0988001A7215 /* Katrina */ = {
+		59604E6A1D45B72A00271015 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				590C56651D1A099C001A7215 /* Command.swift */,
-				590C56661D1A099C001A7215 /* main.swift */,
-				590C56671D1A099C001A7215 /* MinecraftServer.swift */,
-				590C56681D1A099C001A7215 /* NotificationString.swift */,
+				59604E6B1D45B72A00271015 /* Command.swift */,
+				59604E6C1D45B72A00271015 /* main.swift */,
+				59604E6D1D45B72A00271015 /* MinecraftServer.swift */,
+				59604E6E1D45B72A00271015 /* NotificationString.swift */,
 			);
-			path = Katrina;
+			name = Sources;
+			path = ../Sources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -98,7 +99,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0730;
-				LastUpgradeCheck = 0730;
+				LastUpgradeCheck = 0800;
 				ORGANIZATIONNAME = LyokoTech;
 				TargetAttributes = {
 					590C565A1D1A0988001A7215 = {
@@ -128,10 +129,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				590C566B1D1A099C001A7215 /* MinecraftServer.swift in Sources */,
-				590C566C1D1A099C001A7215 /* NotificationString.swift in Sources */,
-				590C56691D1A099C001A7215 /* Command.swift in Sources */,
-				590C566A1D1A099C001A7215 /* main.swift in Sources */,
+				59604E701D45B72A00271015 /* main.swift in Sources */,
+				59604E721D45B72A00271015 /* NotificationString.swift in Sources */,
+				59604E711D45B72A00271015 /* MinecraftServer.swift in Sources */,
+				59604E6F1D45B72A00271015 /* Command.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -180,6 +181,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -217,6 +219,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
@@ -231,6 +234,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 			};
 			name = Release;
 		};

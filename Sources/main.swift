@@ -8,9 +8,10 @@
 
 import Foundation
 
-dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0)) {
+DispatchQueue.global(qos: .background).async {
     MinecraftServer.runJava()
 }
+
 while true {
     sleep(10)
 }

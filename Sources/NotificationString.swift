@@ -8,7 +8,8 @@
 
 import Foundation
 
-enum Notification: String {
-    case UserJoinedGame = "userJoinedGame"
-    case UpdatedInfo = "updatedInfo"
+extension Notification.Name {
+    static let userJoinedGame = Notification.Name(rawValue: "userJoinedGame")
+    static let updatedInfo = Notification.Name(rawValue: "updatedInfo")
+    static let serverRunning = Notification.Name(rawValue: "serverRunning")
 }
