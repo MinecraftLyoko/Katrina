@@ -106,7 +106,7 @@ class MinecraftServer : NSObject, URLSessionDownloadDelegate {
                             try FileManager.default.moveItem(atPath: downloadedPath, toPath: MinecraftServer.jarPath)
                             print("did finish")
                             self.launch()
-                        } catch let error as Error {
+                        } catch {
                             print("Couldn't move file \(error)")
                         }
                     }
