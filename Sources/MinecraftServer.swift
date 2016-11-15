@@ -129,6 +129,14 @@ class MinecraftServer : NSObject, URLSessionDownloadDelegate {
         }
 
         javaTask.launch()
+        DispatchQueue.global(qos: .background).async {
+            while true {
+                if !self.javaTask.isRunning {
+                    UserDefaults.standard.set(nil, forKey: "minecraft_task_id")
+                    exit(0)
+                }
+            }
+        }
         print("Starting java task with id \(javaTask.processIdentifier)")
         UserDefaults.standard.set(Int(javaTask.processIdentifier), forKey: "minecraft_task_id")
     }
@@ -172,6 +180,10 @@ class MinecraftServer : NSObject, URLSessionDownloadDelegate {
             }
         }
 
+        FileHandle.standardInput.readabilityHandler = { handle in
+            self.in🚿.fileHandleForWriting.write(handle.availableData)
+        }
+        
         error🚿.fileHandleForReading.readabilityHandler = { handle in
             if let string = String(data: handle.availableData, encoding: String.Encoding.utf8) {
                 print("DEATH!", string, terminator: "")
