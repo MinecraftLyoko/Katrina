@@ -9,6 +9,7 @@
 import Foundation
 
 DispatchQueue.global(qos: .background).async {
+    SlackManager.shared.launch()
     MinecraftServer.runJava()
 }
 
