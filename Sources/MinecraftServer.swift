@@ -16,6 +16,19 @@ class MinecraftServer : NSObject, URLSessionDownloadDelegate {
     var playerCount: Int = 0
     var maxPlayers: Int = 0
     var serverActive = false
+    lazy var ops: [MinecraftPlayer] = {
+        let url = URL(fileURLWithPath: "\(MinecraftServer.bundlePath)/ops.json")
+        if let data = try? Data(contentsOf: url), let object = (try? JSONSerialization.jsonObject(with: data, options: .mutableLeaves)) as? [[String: Any]] {
+            return object.flatMap { item in
+                guard let uuid = item["uuid"] as? String, let name = item["name"] as? String else { return nil }
+
+                return MinecraftPlayer(uuid: uuid, name: name.lowercased())
+            } 
+        } else {
+            print("ops file not accessible")
+            return []
+        }
+    }()
 
     lazy var javaTask: Process = {
         let javaTask = Process()
@@ -139,6 +152,7 @@ class MinecraftServer : NSObject, URLSessionDownloadDelegate {
         }
         print("Starting java task with id \(javaTask.processIdentifier)")
         UserDefaults.standard.set(Int(javaTask.processIdentifier), forKey: "minecraft_task_id")
+        
     }
 
     func killPreviousServersIfTheyExist() {
@@ -158,15 +172,21 @@ class MinecraftServer : NSObject, URLSessionDownloadDelegate {
         NotificationCenter.default.post(name: .serverRunning, object: nil)
     }
 
-    func parseLog(log: String) {
-        if log.contains("[Server thread/INFO]: ") {
-            if log.contains("Done") {
+    func parse(log: MinecraftLog) {
+
+        if let channel = SlackManager.shared.channel(withName: "serveradmin"), log.kind != .chat {
+            SlackManager.shared.send(log: log, to: channel)
+        }
+        print(log, terminator: "")
+
+        if log.thread == .serverThread && log.kind == .info {
+            if log.message.contains("Done") {
                 serverDidLoad()
             }
 
-            if log.contains("joined the game\n") {
-                let range = log.index(log.startIndex, offsetBy: 33) ..< log.endIndex
-                _ = log.substring(with: range).replacingOccurrences(of: " joined the game\n", with: "")
+            if log.message.contains("joined the game\n") {
+                let range = log.message.index(log.message.startIndex, offsetBy: 33) ..< log.message.endIndex
+                _ = log.message.substring(with: range).replacingOccurrences(of: " joined the game\n", with: "")
 
             }
         }
@@ -174,9 +194,8 @@ class MinecraftServer : NSObject, URLSessionDownloadDelegate {
 
     func setup🚿() {
         out🚿.fileHandleForReading.readabilityHandler = { handle in
-            if let string = String(data: handle.availableData, encoding: String.Encoding.utf8) {
-                self.parseLog(log: string)
-                print(string, terminator: "")
+            if let string = String(data: handle.availableData, encoding: String.Encoding.utf8), let log = MinecraftLog(logMessage: string) {
+                self.parse(log: log)
             }
         }
 

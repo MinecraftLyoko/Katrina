@@ -40,7 +40,7 @@ class Command {
         }
     }
 
-    class func list() {
+    class func list(attachmentHandler: ((Any) -> Void)?) {
         runCommand(command: "list", responses: 2) { logs in
             var num = logs[0]
             var players = logs[1]
@@ -54,10 +54,19 @@ class Command {
             let playerRange = players.index(players.startIndex, offsetBy: 33) ..< players.endIndex
             players = players.substring(with: playerRange)
             players = players.replacingOccurrences(of: "\n", with: "")
+            let playerArray = players.components(separatedBy: ", ")
 
+            
             if let playerCount = Int(numArr[0]), let maxPlayers = Int(numArr[1]) {
                 MinecraftServer.defaultServer.playerCount = playerCount
                 MinecraftServer.defaultServer.maxPlayers = maxPlayers
+
+                let attachments = [[
+                    "text": "There \(playerCount == 1 ? "is" : "are") \(playerCount) player\(playerCount == 1 ? "" : "s") online\(playerCount > 0 ? ":" : "") \(playerArray.reduce("", { $0 + "\n\($1)" }))",
+                    "color": "#A8CC97"
+                ]]
+                attachmentHandler?(attachments)
+                
             }
         }
     }
