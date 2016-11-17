@@ -42,7 +42,9 @@ class MinecraftServer : NSObject, URLSessionDownloadDelegate {
     }()
 
     static let bundlePath = Bundle.main.bundlePath + "/Contents/server"
+    static let buildPath = "\(MinecraftServer.bundlePath)/build"
     static let jarPath = "\(MinecraftServer.bundlePath)/minecraft_download.jar"
+    static let bukkitPath = "\(MinecraftServer.bundlePath)/craftbukkit_download.jar"
 
     static var defaultServer: MinecraftServer = {
         let server = MinecraftServer()
@@ -51,10 +53,13 @@ class MinecraftServer : NSObject, URLSessionDownloadDelegate {
     }()
 
     class func runJava(forceDownload: Bool = false) {
-        if forceDownload || !FileManager.default.fileExists(atPath: jarPath) {
-            defaultServer.downloadServer()
-        } else {
+        if forceDownload || !FileManager.default.fileExists(atPath: jarPath) || !FileManager.default.fileExists(atPath: bukkitPath) {
+//            defaultServer.downloadVanillaServer()
+            defaultServer.downloadCraftBukkitServer()
+        } else if FileManager.default.fileExists(atPath: jarPath) {
             defaultServer.launch()
+        } else {
+            defaultServer.launchCraftBukkit()
         }
     }
 
@@ -85,18 +90,54 @@ class MinecraftServer : NSObject, URLSessionDownloadDelegate {
         task.resume()
     }
 
-    func downloadServer(version: String = "latest") {
+    func makeServerPathIfNeeded() {
+        if !FileManager.default.fileExists(atPath: MinecraftServer.bundlePath) {
+            do {
+                try FileManager.default.createDirectory(atPath: MinecraftServer.bundlePath, withIntermediateDirectories: true, attributes: nil)
+            } catch let error as NSError {
+                print(error)
+            }
+        }
+
+        if !FileManager.default.fileExists(atPath: MinecraftServer.buildPath) {
+            do {
+                try FileManager.default.createDirectory(atPath: MinecraftServer.buildPath, withIntermediateDirectories: true, attributes: nil)
+            } catch let error as NSError {
+                print(error)
+            }
+        }
+
+        if FileManager.default.fileExists(atPath: MinecraftServer.jarPath) {
+            do {
+                try FileManager.default.removeItem(atPath: MinecraftServer.jarPath)
+            } catch let error as NSError {
+                print(error)
+            }
+        }
+
+        if FileManager.default.fileExists(atPath: MinecraftServer.bukkitPath) {
+            do {
+                try FileManager.default.removeItem(atPath: MinecraftServer.bukkitPath)
+            } catch let error as NSError {
+                print(error)
+            }
+        }
+
+        if FileManager.default.fileExists(atPath: MinecraftServer.buildPath + "/BuildTools.jar") {
+            do {
+                try FileManager.default.removeItem(atPath: MinecraftServer.buildPath + "/BuildTools.jar")
+            } catch let error as NSError {
+                print(error)
+            }
+        }
+    }
+
+    func downloadVanillaServer(version: String = "latest") {
         if version == "latest" {
             latestVersion { version in
                 guard let version = version else { return }
 
-                if !FileManager.default.fileExists(atPath: MinecraftServer.bundlePath) {
-                    do {
-                        try FileManager.default.createDirectory(atPath: MinecraftServer.bundlePath, withIntermediateDirectories: true, attributes: nil)
-                    } catch let error as NSError {
-                        print(error)
-                    }
-                }
+                self.makeServerPathIfNeeded()
 
                 if FileManager.default.fileExists(atPath: MinecraftServer.jarPath) {
                     do {
@@ -130,6 +171,70 @@ class MinecraftServer : NSObject, URLSessionDownloadDelegate {
         }
     }
 
+    func downloadCraftBukkitServer(version: String = "latest") {
+        if version == "latest" {
+            downloadBuildToolsIfNedded {
+                print(MinecraftServer.bukkitPath)
+            }
+        }
+    }
+
+    func downloadBuildToolsIfNedded(callback: @escaping (() -> Void)) {
+        guard let url = URL(string: "https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar") else {
+            return
+        }
+
+        makeServerPathIfNeeded()
+        
+        URLSession.shared.downloadTask(with: url) { downloadedPath, response, error in
+            guard let downloadedPath = downloadedPath?.relativePath else {
+                print("error downloading \(error)")
+                return
+            }
+            do {
+                try FileManager.default.moveItem(atPath: downloadedPath, toPath: MinecraftServer.buildPath + "/BuildTools.jar")
+                
+                self.buildCraftBukkit(completion: callback)
+            } catch {
+                print("Couldn't move file \(error)")
+            }
+        }.resume()
+    }
+
+    func buildCraftBukkit(completion: @escaping (() -> Void)) {
+        let environmentSetter = Process()
+        environmentSetter.launchPath = "/bin/bash"
+        environmentSetter.arguments = ["-c", ""]
+        environmentSetter.launch()
+        environmentSetter.waitUntilExit()
+        
+        let builder = Process()
+        builder.launchPath = "/bin/bash"
+        builder.arguments = ["-c", "cd \(MinecraftServer.buildPath) && export MAVEN_OPTS=\"-Xmx2g\" && /usr/bin/java -Xmx2G -jar \(MinecraftServer.buildPath)/BuildTools.jar"]
+        let pipeReader = Pipe()
+        guard let regex = try? NSRegularExpression(pattern: "Saved as (craftbukkit-.*\\.jar)", options: []) else { return }
+        pipeReader.fileHandleForReading.readabilityHandler = { handle in
+            guard let string = String(data: handle.availableData, encoding: .utf8) else { return }
+            guard let match = regex.matches(in: string, options: [], range: NSRange(location: 0, length: (string as NSString).length)).first else { return }
+            guard match.rangeAt(1).location < (string as NSString).length else { return }
+
+            let craftbukkitFilePath = "\(MinecraftServer.buildPath)/\((string as NSString).substring(with: match.rangeAt(1)))"
+
+            do {
+                try FileManager.default.moveItem(atPath: craftbukkitFilePath, toPath: MinecraftServer.bukkitPath)
+                try FileManager.default.removeItem(atPath: MinecraftServer.buildPath)
+            } catch {
+                print(error)
+            }
+
+            completion()
+
+
+        }
+        builder.standardOutput = pipeReader
+        builder.launch()
+    }
+
     func launch() {
         killPreviousServersIfTheyExist()
 
@@ -152,6 +257,10 @@ class MinecraftServer : NSObject, URLSessionDownloadDelegate {
         }
         print("Starting java task with id \(javaTask.processIdentifier)")
         UserDefaults.standard.set(Int(javaTask.processIdentifier), forKey: "minecraft_task_id")
+        
+    }
+
+    func launchCraftBukkit() {
         
     }
 

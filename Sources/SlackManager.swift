@@ -180,10 +180,10 @@ class SlackManager {
                 }
                 print(message)
             } else {
-                print("Not parsable \(object)")
+
             }
         } else {
-            print("got some text \(text)")
+
         }
     }
 
@@ -248,8 +248,6 @@ class SlackManager {
                     }
                 }
 
-                print(self.channelList!)
-                print(self.userList!)
                 self.connectSocket(with: socketURL, handler: handler)
                 return
             }
