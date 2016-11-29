@@ -10,7 +10,7 @@ import Foundation
 
 DispatchQueue.global(qos: .background).async {
     SlackManager.shared.launch()
-    MinecraftServer.runJava()
+    MinecraftServer.runJava(forceDownload: false, useCraftbukkit: true)
 }
 
 while true {

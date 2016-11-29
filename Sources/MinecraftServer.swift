@@ -30,11 +30,12 @@ class MinecraftServer : NSObject, URLSessionDownloadDelegate {
         }
     }()
 
+    var usingCraftbukkit = false
     lazy var javaTask: Process = {
         let javaTask = Process()
         javaTask.currentDirectoryPath = MinecraftServer.bundlePath
         javaTask.launchPath = "/usr/bin/java"
-        javaTask.arguments = ["-Xmx1024M", "-Xms1024M", "-jar", MinecraftServer.jarPath, "nogui"]
+        javaTask.arguments = ["-Xmx1024M", "-Xms1024M", "-jar", self.usingCraftbukkit ? MinecraftServer.bukkitPath : MinecraftServer.jarPath, "nogui"]
 
         javaTask.standardOutput = self.out🚿
         javaTask.standardInput = self.in🚿
@@ -52,14 +53,28 @@ class MinecraftServer : NSObject, URLSessionDownloadDelegate {
         return server
     }()
 
-    class func runJava(forceDownload: Bool = false) {
-        if forceDownload || !FileManager.default.fileExists(atPath: jarPath) || !FileManager.default.fileExists(atPath: bukkitPath) {
-//            defaultServer.downloadVanillaServer()
-            defaultServer.downloadCraftBukkitServer()
-        } else if FileManager.default.fileExists(atPath: jarPath) {
-            defaultServer.launch()
+    class func runJava(forceDownload: Bool = false, useCraftbukkit: Bool = false) {
+        defaultServer.usingCraftbukkit = useCraftbukkit
+        if forceDownload {
+            if useCraftbukkit {
+                defaultServer.downloadCraftBukkitServer()
+            } else {
+                defaultServer.downloadVanillaServer()
+            }
         } else {
-            defaultServer.launchCraftBukkit()
+            if useCraftbukkit {
+                if FileManager.default.fileExists(atPath: bukkitPath) {
+                    defaultServer.launch()
+                } else {
+                    defaultServer.downloadCraftBukkitServer()
+                }
+            } else {
+                if FileManager.default.fileExists(atPath: jarPath) {
+                    defaultServer.launch()
+                } else {
+                    defaultServer.downloadVanillaServer()
+                }
+            }
         }
     }
 
@@ -257,10 +272,6 @@ class MinecraftServer : NSObject, URLSessionDownloadDelegate {
         }
         print("Starting java task with id \(javaTask.processIdentifier)")
         UserDefaults.standard.set(Int(javaTask.processIdentifier), forKey: "minecraft_task_id")
-        
-    }
-
-    func launchCraftBukkit() {
         
     }
 

@@ -29,14 +29,18 @@ struct MinecraftLog {
     let message: String
     let metadata: [String: Any]?
 
+    static var regexString: String {
+        return MinecraftServer.defaultServer.usingCraftbukkit ? "\\[(.*) ()(.*)\\]: (<.*>)?(.*)" : "\\[(.*)\\] \\[(.*)\\/(.*)\\]: (<.*>)?(.*)"
+    }
+    
     init?(logMessage: String) {
-        guard let regex = try? NSRegularExpression(pattern: "\\[(.*)\\] \\[(.*)\\/(.*)\\]: (<.*>)?(.*)", options: .caseInsensitive) else { return nil }
+        guard let regex = try? NSRegularExpression(pattern: MinecraftLog.regexString, options: .caseInsensitive) else { return nil }
 
         guard let match = regex.matches(in: logMessage, options: [], range: NSRange(location: 0, length: (logMessage as NSString).length)).first else { return nil }
 
         let nsLogMessage = logMessage as NSString
         timestamp = nsLogMessage.substring(with: match.rangeAt(1))
-        let threadString = nsLogMessage.substring(with: match.rangeAt(2))
+        let threadString = MinecraftServer.defaultServer.usingCraftbukkit ? "" : nsLogMessage.substring(with: match.rangeAt(2))
         let kindString = nsLogMessage.substring(with: match.rangeAt(3))
         if match.rangeAt(4).location < nsLogMessage.length {
             chatter = nsLogMessage.substring(with: match.rangeAt(4)).replacingOccurrences(of: "<", with: "").replacingOccurrences(of: ">", with: "")
